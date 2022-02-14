@@ -1,12 +1,19 @@
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { Container, Row, Col, Form } from 'react-bootstrap'
+import { Container, Row, Col } from 'react-bootstrap'
 import { Component } from 'react'
 import MovieDetails from './components/MovieDetails'
+import MovieDropDown from './components/MovieDropDown'
 
 class App extends Component {
   state = {
     movieTitle: 'Batman Begins',
+  }
+
+  changeMovieTitle = (newMovieSelected) => {
+    this.setState({
+      movieTitle: newMovieSelected,
+    })
   }
 
   render() {
@@ -15,22 +22,10 @@ class App extends Component {
         <Container>
           <Row className='justify-content-center'>
             <Col xs={12} md={6}>
-              <Form.Group>
-                <Form.Label>Choose a movie!</Form.Label>
-                <Form.Control
-                  as='select'
-                  value={this.state.movieTitle}
-                  onChange={(e) =>
-                    this.setState({ movieTitle: e.target.value })
-                  }
-                >
-                  <option>Batman Begins</option>
-                  <option>Wonder Woman</option>
-                  <option>Man of Steel</option>
-                  <option>The Flash</option>
-                  <option>Iron Man</option>
-                </Form.Control>
-              </Form.Group>
+              <MovieDropDown
+                movieTitle={this.state.movieTitle} // read-only value
+                changeMovieTitle={this.changeMovieTitle} // the function for changing it
+              />
             </Col>
           </Row>
           <Row className='justify-content-center'>

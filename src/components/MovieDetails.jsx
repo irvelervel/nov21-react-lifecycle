@@ -8,6 +8,11 @@
 // 3) when the fetch finishes, componentDidMount sets the state
 // 4) when the state or the props of a component change, the render() method fires again!
 // 5) this time this.state.movie is a thing, so the interface fills up with the poster, the title etc.
+// 6) changing then the movie title in the dropdown will make MovieDetails update, because a new prop movieTitle will be passed to it
+// 7) you can intercept this movieTitle update with a lifecycle method called componentDidUpdate
+// 8) componentDidUpdate will fire every time a prop or state change is detected. Use it checking the difference from before, on the state or on the props
+// 9) so you can re-fire your logic in specific moments
+// 10) chances are, if you don't put a check in your componentDidUpdate, infinite loops will occurr :(
 
 import { Component } from 'react'
 import { Card } from 'react-bootstrap'
@@ -45,6 +50,8 @@ class MovieDetails extends Component {
     if (previousProps.movieTitle !== this.props.movieTitle) {
       this.fetchMovieDetails()
     }
+    // you always want to perform a check in componentDidUpdate before doing anything
+    // checking a change in the props will stop your component from re-doing the fetch when you set the state
   }
 
   fetchMovieDetails = async () => {
