@@ -2,6 +2,13 @@
 // and with that title will fetch some details about it
 // and will display those info in a Card
 
+// LIFECYCLE
+// 1) initial render(), with just the empty Card
+// 2) componentDidMount() fires and triggers the fetch()
+// 3) when the fetch finishes, componentDidMount sets the state
+// 4) when the state or the props of a component change, the render() method fires again!
+// 5) this time this.state.movie is a thing, so the interface fills up with the poster, the title etc.
+
 import { Component } from 'react'
 import { Card } from 'react-bootstrap'
 
@@ -20,6 +27,27 @@ class MovieDetails extends Component {
     // componentDidMount is a lifecycle method occurring JUST ONCE
     // it triggers just after the initial render of the component
     console.log('componentDidMount happened!')
+    this.fetchMovieDetails()
+  }
+
+  componentDidUpdate = (previousProps, previousState) => {
+    // this one is veeery frequent!
+    // componentDidUpdate fires EVERY TIME there's a change
+    // in the props or in the state (just like render!)
+
+    // componentDidUpdate works too well!
+    // we need to pinpoint just the situations in which we WANT to do a re-fetch!
+    // when do we want to re-fetch the movie details?
+    // then the selection in the dropdown changes!
+    // NOT when the state changes...
+    // how can we trigger our network call just when this.props.movieTitle changes?
+    // with previousProps and previousState!
+    if (previousProps.movieTitle !== this.props.movieTitle) {
+      this.fetchMovieDetails()
+    }
+  }
+
+  fetchMovieDetails = async () => {
     try {
       let response = await fetch(
         'http://www.omdbapi.com/?apikey=24ad60e9&s=' + this.props.movieTitle
@@ -46,16 +74,23 @@ class MovieDetails extends Component {
   }
 
   render() {
+    console.log('render() fired again!')
     return (
       <Card>
-        <Card.Img variant='top' src='https://placekitten.com/300/300' />
-        <Card.Body className='text-dark'>
-          <Card.Title>Card Title</Card.Title>
-          <Card.Text>
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-          </Card.Text>
-        </Card.Body>
+        {/* this.state.movie initially is null, so I have to put this check in place */}
+        {/* and render the content just after finishing the fetching, so when this.state.movie */}
+        {/* is actually a thing */}
+        {this.state.movie && (
+          <>
+            <Card.Img variant='top' src={this.state.movie.Poster} />
+            <Card.Body className='text-dark'>
+              <Card.Title>{this.state.movie.Title}</Card.Title>
+              <Card.Text>
+                {this.state.movie.Year} - {this.state.movie.imdbID}
+              </Card.Text>
+            </Card.Body>
+          </>
+        )}
       </Card>
     )
   }
